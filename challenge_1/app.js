@@ -5,6 +5,7 @@ const _Player1 = prompt('Name Player 1:') || 'Player X';
 const _Player2 = prompt('Name Player 2:') || 'Player O';
 
 //TODO: Implement Draws and maybe have an in-memory Board like in n-queens
+// or scoreboard feature
 
 function playSpace(e) {
   e.target.innerText = _turn
@@ -115,3 +116,7 @@ document.getElementById('clear-btn').addEventListener('click', clearBoard)
 // Are callbacks always async?
 addEventListenersToSpaces();
 
+/*
+View: What it looks like visually. DOM page
+Controller: How a user adds a task or marks as complete
+*/
