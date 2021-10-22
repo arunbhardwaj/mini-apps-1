@@ -19,7 +19,6 @@ class App extends React.Component {
   }
 
   changeFormView = (newState) => {
-    console.log(newState);
     this.setState(newState);
   }
 
@@ -34,62 +33,147 @@ class App extends React.Component {
 }
 
 const Checkout = (props) => {
-  return (props.parent.showCheckout)
-    ? (
-      <div>
+  return (
+    <div>
+      {props.parent.showCheckout &&
         <button onClick={() => props.changeForm({showCheckout: false, showF1: true})}>
           Checkout
         </button>
-      </div>
-      )
-    : <div></div>
+      }
+    </div>
+  )
 }
+
+const forms = [
+  [
+    {
+      labelName: 'Name:',
+      htmlFor: 'name',
+      inputType: 'text'
+    },
+    {
+      labelName: 'Email:',
+      htmlFor: 'email',
+      inputType: 'email',
+    },
+    {
+      labelName: 'Password:',
+      htmlFor: 'password',
+      inputType: 'password',
+    }
+  ],
+  [
+    {
+      labelName: 'Line 1:',
+      htmlFor: 'line1',
+      inputType: 'text'
+    },
+    {
+      labelName: 'Line 2:',
+      htmlFor: 'line2',
+      inputType: 'text'
+    },
+    {
+      labelName: 'City:',
+      htmlFor: 'city',
+      inputType: 'text'
+    },
+    {
+      labelName: 'State:',
+      htmlFor: 'state',
+      inputType: 'text'
+    },,
+    {
+      labelName: 'Zip Code:',
+      htmlFor: 'zip-code',
+      inputType: 'number'
+    },
+  ],
+  [
+    {
+      labelName: 'Credit Card #:',
+      htmlFor: 'credit-card',
+      inputType: 'number'
+    },
+    {
+      labelName: 'Expiry Date:',
+      htmlFor: 'expiry',
+      inputType: 'date'
+    },
+    {
+      labelName: 'CVV:',
+      htmlFor: 'cvv',
+      inputType: 'number'
+    },
+    {
+      labelName: 'Billing Zip Code:',
+      htmlFor: 'billing-zip-code',
+      inputType: 'number'
+    },
+  ]
+]
 
 const ShowForm = (props) => {
   let {showF1, showF2, showF3} = props.parent;
 
-  if (showF1) {
-    return <F1 changeForm={props.changeForm}/>
-  } else if (showF2) {
-    return <F2 changeForm={props.changeForm}/>
-  } else if (showF3) {
-    return <F3 changeForm={props.changeForm}/>
-  } else {
-    return <div></div>;
-  }
+  return (
+    <div>
+      {showF1 && <Form title={'Guest Sign-Up'} arr={forms[0]} changeForm={props.changeForm} next={{showF1: false, showF2: true}}/>}
+      {showF2 && <Form title={'Shipping Information'} arr={forms[1]} changeForm={props.changeForm} next={{showF2: false, showF3: true}}/>}
+      {showF3 && <Form title={'Billing Information'} arr={forms[2]} changeForm={props.changeForm} next={{showF3: false, showCheckout: true}}/>}
+    </div>
+  )
+}
+
+const Form = ({title, arr, changeForm, next}) => {
+  return (
+    <div>
+      <h2>{title}</h2>
+      <form>
+        {arr.map(({htmlFor, labelName, inputType, inputId = htmlFor}) => {
+          return <Input htmlFor={htmlFor} labelName={labelName} inputType={inputType} />
+        })}
+      </form>
+      <button onClick={() => changeForm(next)}>Next</button>
+    </div>
+  )
+}
+
+const Input = ({htmlFor, labelName, inputType, inputId = htmlFor}) => {
+  return (
+    <div className="input">
+      <label htmlFor={htmlFor}>{labelName}</label>
+      <input type={inputType} id={inputId} required></input>
+    </div>
+  )
 }
 
 const F1 = (props) => {
   return (
     <div>
+      <h2>Guest Sign-Up</h2>
       <form>
-        Name:
-        <input></input>
-        Email:
-        <input></input>
-        Password:
-        <input></input>
+        <Input htmlFor={'name'} labelName={'Name:'} inputType={'text'}/>
+        <Input htmlFor={'email'} labelName={'Email:'} inputType={'email'}/>
+        <Input htmlFor={'password'} labelName={'Password:'} inputType={'password'}/>
       </form>
       <button onClick={() => props.changeForm({showF1: false, showF2: true})}>Next</button>
     </div>
   )
 }
+
 const F2 = (props) => {
   return (
     <div>
+      <h2>Shipping Information</h2>
       <form>
-        Line 1:
-        <input></input>
-        Line 2:
-        <input></input>
-        City:
-        <input></input>
-        State:
-        <input></input>
-        Zip Code:
-        <input></input>
+        <Input htmlFor={'line1'} labelName={'Line 1:'} inputType={'text'}/>
+        <Input htmlFor={'line2'} labelName={'Line 2:'} inputType={'text'}/>
+        <Input htmlFor={'city'} labelName={'City:'} inputType={'text'}/>
+        <Input htmlFor={'state'} labelName={'State:'} inputType={'text'}/>
+        <Input htmlFor={'zip-code'} labelName={'Zip Code:'} inputType={'number'}/>
       </form>
-      <button onClick={() => props.changeForm({showF2: false, showF3: true})}>Next</button>
+      <button type="submit" onClick={() => props.changeForm({showF2: false, showF3: true})}>Next</button>
     </div>
   )
 }
@@ -97,15 +181,12 @@ const F2 = (props) => {
 const F3 = (props) => {
   return (
     <div>
+      <h2>Billing Information</h2>
       <form>
-        Credit Card #:
-        <input></input>
-        Expiry Date:
-        <input></input>
-        CVV:
-        <input></input>
-        Billing Zip Code:
-        <input></input>
+        <Input htmlFor={'credit-card'} labelName={'Credit Card #:'} inputType={'text'}/>
+        <Input htmlFor={'expiry'} labelName={'Expiry Date:'} inputType={'text'}/>
+        <Input htmlFor={'cvv'} labelName={'CVV:'} inputType={'text'}/>
+        <Input htmlFor={'billing-zip-code'} labelName={'Billing Zip Code:'} inputType={'number'}/>
       </form>
       <button onClick={() => props.changeForm({showF3: false, showCheckout: true})}>Finish</button>
     </div>
