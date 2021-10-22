@@ -14,19 +14,51 @@ class App extends React.Component {
       showCheckout: true,
       showF1: false,
       showF2: false,
-      showF3: false
+      showF3: false,
+      data: {
+        // name: '',
+        // email: '',
+        // password: '',
+        // line1: '',
+        // line2: '',
+        // city: '',
+        // state: '',
+        // zipCode: -1,
+        // creditCard: -1,
+        // expiryDate: '',
+        // cvv: -1,
+        // billingZipCode: -1
+      }
     }
+
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
   changeFormView = (newState) => {
     this.setState(newState);
   }
 
+  onChange = (key, e) => {
+    let newState = this.state;
+    newState.data[[key]] = e.target.value;
+    this.setState(newState);
+  }
+
+  handleSubmit() {
+    axios.post('http://localhost:3300/', this.state.data)
+      .then(() => {
+        console.log('sent');
+        this.setState({data: {}})
+      })
+      .catch(err => console.log('not received'));
+  }
+
   render() {
     return (
       <div>
         <Checkout parent={this.state} changeForm={this.changeFormView} />
-        <ShowForm parent={this.state} changeForm={this.changeFormView} />
+        <ShowForm parent={this.state} changeForm={this.changeFormView} handleSubmit={this.handleSubmit} onChange={this.onChange}/>
       </div>
     )
   }
@@ -85,14 +117,14 @@ const forms = [
     },,
     {
       labelName: 'Zip Code:',
-      htmlFor: 'zip-code',
+      htmlFor: 'zipCode',
       inputType: 'number'
     },
   ],
   [
     {
       labelName: 'Credit Card #:',
-      htmlFor: 'credit-card',
+      htmlFor: 'creditCard',
       inputType: 'number'
     },
     {
@@ -107,43 +139,46 @@ const forms = [
     },
     {
       labelName: 'Billing Zip Code:',
-      htmlFor: 'billing-zip-code',
+      htmlFor: 'billingZipCode',
       inputType: 'number'
     },
   ]
 ]
 
+// If adding more forms, be sure to change the 'isFinal' flag to the last form
+// and change the 'next' value.
 const ShowForm = (props) => {
   let {showF1, showF2, showF3} = props.parent;
 
   return (
     <div>
-      {showF1 && <Form title={'Guest Sign-Up'} arr={forms[0]} changeForm={props.changeForm} next={{showF1: false, showF2: true}}/>}
-      {showF2 && <Form title={'Shipping Information'} arr={forms[1]} changeForm={props.changeForm} next={{showF2: false, showF3: true}}/>}
-      {showF3 && <Form title={'Billing Information'} arr={forms[2]} changeForm={props.changeForm} next={{showF3: false, showCheckout: true}}/>}
+      {showF1 && <Form title={'Guest Sign-Up'} arr={forms[0]} changeForm={props.changeForm} next={{showF1: false, showF2: true}} onChange={props.onChange}/>}
+      {showF2 && <Form title={'Shipping Information'} arr={forms[1]} changeForm={props.changeForm} next={{showF2: false, showF3: true}} onChange={props.onChange}/>}
+      {showF3 && <Form title={'Billing Information'} arr={forms[2]} changeForm={props.changeForm} next={{showF3: false, showCheckout: true}} isFinal={true} handleSubmit={() => props.handleSubmit()} onChange={props.onChange}/>}
     </div>
   )
 }
 
-const Form = ({title, arr, changeForm, next}) => {
+const Form = ({title, arr, changeForm, next, onChange, isFinal = false, handleSubmit = ()=>{}}) => {
   return (
     <div>
       <h2>{title}</h2>
       <form>
         {arr.map(({htmlFor, labelName, inputType, inputId = htmlFor}) => {
-          return <Input htmlFor={htmlFor} labelName={labelName} inputType={inputType} />
+          return <Input htmlFor={htmlFor} labelName={labelName} inputType={inputType} onChange={onChange}/>
         })}
+        {isFinal && <button type="submit" onClick={() => {handleSubmit(); changeForm(next)}}>Final</button>}
+        {!isFinal && <button onClick={() => changeForm(next)}>Next</button>}
       </form>
-      <button onClick={() => changeForm(next)}>Next</button>
     </div>
   )
 }
 
-const Input = ({htmlFor, labelName, inputType, inputId = htmlFor}) => {
+const Input = ({htmlFor, labelName, inputType, inputId = htmlFor, onChange = ()=>{}}) => {
   return (
     <div className="input">
       <label htmlFor={htmlFor}>{labelName}</label>
-      <input type={inputType} id={inputId} required></input>
+      <input type={inputType} id={inputId} onChange={(e) => onChange(htmlFor, e)} required={htmlFor !== 'line2'}></input>
     </div>
   )
 }

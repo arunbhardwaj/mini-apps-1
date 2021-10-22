@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-mongoose.connect('mongodb://localhost:3300/checkoutForm');
+mongoose.connect('mongodb://localhost/checkoutForm');
 
 const formSchema = new mongoose.Schema({
   name: String,
@@ -14,7 +14,7 @@ const formSchema = new mongoose.Schema({
   },
   payment: {
     creditCard: String,
-    CVV: Number,
+    cvv: Number,
     expiryDate: String,
     billingZipCode: String
   }
@@ -22,7 +22,26 @@ const formSchema = new mongoose.Schema({
 
 const Form = mongoose.model('Form', formSchema);
 
-const save = (obj) = {
-  let newEntry = new Form(obj);
+const save = ({name, email, password, line1, line2, city, state, zipCode, creditCard, cvv, expiryDate, billingZipCode}) => {
+  let newEntry = new Form({
+    name,
+    email,
+    password,
+    address: {
+      line1,
+      line2,
+      city,
+      state,
+      zipCode
+    },
+    payment: {
+      creditCard,
+      cvv,
+      expiryDate,
+      billingZipCode
+    }
+  });
   newEntry.save();
 }
+
+module.exports.save = save;
