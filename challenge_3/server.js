@@ -1,6 +1,7 @@
 const express = require('express');
 const path = require('path');
 const db = require('./db');
+const sequelize = require('sequelize');
 
 const app = express();
 
@@ -21,6 +22,22 @@ app.get('/', (req, res) => {
 
 app.post('/', (req, res) => {
   console.log("🚀 ~ file: server.js ~ line 21 ~ app.post ~ req", req.body)
-  db.save(req.body);
+
+  // NoSQL with Mongoose
+  // db.save.save(req.body);
+
+  // mySQL ---> ERRORS ON insertion due to inserting into wrong columns. weird
+  // Don't try to use default keyword unless it's in original string
+  // let queryString = 'insert into formData(id, name, email, password) values (default, ?, ?, ?)';
+  // let queryArgs = [req.body.name, req.body.email, req.body.password];
+  // db.connection.promise().query(queryString, queryArgs)
+  //   .then((result) => {
+  //     console.log(result);
+  //     console.log('twas a success');
+  //   });
+
+  // Sequelize
+  console.log(db.FormData);
+  db.FormData.create(req.body);
   res.send('hit');
 })
