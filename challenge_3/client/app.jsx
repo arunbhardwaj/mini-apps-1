@@ -154,7 +154,7 @@ const ShowForm = (props) => {
     <div>
       {showF1 && <Form title={'Guest Sign-Up'} arr={forms[0]} changeForm={props.changeForm} next={{showF1: false, showF2: true}} onChange={props.onChange}/>}
       {showF2 && <Form title={'Shipping Information'} arr={forms[1]} changeForm={props.changeForm} next={{showF2: false, showF3: true}} onChange={props.onChange}/>}
-      {showF3 && <Form title={'Billing Information'} arr={forms[2]} changeForm={props.changeForm} next={{showF3: false, showCheckout: true}} isFinal={true} handleSubmit={() => props.handleSubmit()} onChange={props.onChange}/>}
+      {showF3 && <Form title={'Billing Information'} arr={forms[2]} changeForm={props.changeForm} next={{showF3: false, showCheckout: true}} isFinal={true} handleSubmit={props.handleSubmit} onChange={props.onChange}/>}
     </div>
   )
 }
