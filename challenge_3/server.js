@@ -24,7 +24,7 @@ app.post('/', (req, res) => {
   console.log("🚀 ~ file: server.js ~ line 21 ~ app.post ~ req", req.body)
 
   // NoSQL with Mongoose
-  // db.save.save(req.body);
+  db.save(req.body);
 
   // mySQL ---> ERRORS ON insertion due to inserting into wrong columns. weird
   // Don't try to use default keyword unless it's in original string
@@ -37,7 +37,7 @@ app.post('/', (req, res) => {
   //   });
 
   // Sequelize
-  console.log(db.FormData);
-  db.FormData.create(req.body);
+  // console.log(db.FormData);
+  // db.FormData.create(req.body);
   res.send('hit');
 })
